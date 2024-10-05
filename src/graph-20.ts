@@ -58,34 +58,43 @@ export function handleApproval(event: Approval): void {
   // - contract.transfer(...)
   // - contract.transferFrom(...)
     // Load or create the user entity for the owner (who gives approval)
-    let owner = loadOrCreateUser(event.params.owner.toHex());
+}
+    
+    export function handleTransfer(event: Transfer): void {
+      
+      let sender = loadOrCreateUser(event.params.from.toHex())
+      let receiver = loadOrCreateUser(event.params.to.toHex())
+      
+      // Loading sender's balance
+      let senderBalance = Balance.load(sender.id + "-" + event.address.toHex())
+      if (senderBalance == null) {
+        senderBalance = new Balance(sender.id + "-" + event.address.toHex())
+        senderBalance.user = sender.id
+        senderBalance.token = event.address.toHex()
+        senderBalance.amount = BigInt.fromI32(0)
+      }
+    
+      // Loading receiver's balance
+      let receiverBalance = Balance.load(receiver.id + "-" + event.address.toHex())
+      if (receiverBalance == null) {
+        receiverBalance = new Balance(receiver.id + "-" + event.address.toHex())
+        receiverBalance.user = receiver.id
+        receiverBalance.token = event.address.toHex()
+        receiverBalance.amount = BigInt.fromI32(0)
+      }
+    
+      // Updating balances
+      senderBalance.amount = senderBalance.amount.minus(event.params.value)
+      receiverBalance.amount = receiverBalance.amount.plus(event.params.value)
+    
+      senderBalance.save()
+      receiverBalance.save()
+    }
   
-    // Load or create the user entity for the spender (who is approved)
-    let spender = loadOrCreateUser(event.params.spender.toHex());
-  
-    // Create a new balance entity for the owner
-    let ownerBalance = new Balance(owner.id + "-" + event.block.timestamp.toString());
-    ownerBalance.user = owner.id;
-    ownerBalance.timestamp = event.block.timestamp;
-    ownerBalance.transactionHash = event.transaction.hash;
-    ownerBalance.save();
-  
-    // Create a new balance entity for the spender
-    let spenderBalance = new Balance(spender.id + "-" + event.block.timestamp.toString());
-    spenderBalance.user = spender.id;
-    spenderBalance.timestamp = event.block.timestamp;
-    spenderBalance.transactionHash = event.transaction.hash;
-    spenderBalance.save();
-  }
 
 export function handleOwnershipTransferred(event: OwnershipTransferred): void {}
 
-export function handleTransfer(event: Transfer): void {}
 
-//This Subgraph code listens for events emitted by the Graph20 contract 
-//and processes them to track user and balance entities. 
-//It saves this information in a decentralized storage for later querying via The Graph. 
-//You can modify the handlers to suit your specific needs, such as logging additional metadata or handling other events.
 
 
 

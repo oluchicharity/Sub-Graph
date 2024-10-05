@@ -1,11 +1,11 @@
 type User @entity {
-    id: ID!
-    Balance: [Balance!]! @derivedFrom(field: "user")
+  id: ID!
+  balances: [Balance!]! @derivedFrom(field: "user")
 }
 
 type Balance @entity {
-    id: ID!
-    user: User!
-    timestamp: BigInt!
-    transactionHash: Bytes!
+  id: ID!
+  user: User!
+  token: String! 
+  amount: BigInt!
 }
