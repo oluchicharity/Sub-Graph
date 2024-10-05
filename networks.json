@@ -1,0 +1,8 @@
+{
+  "sepolia": {
+    "Graph20": {
+      "address": "0xD719600A050B33750881104F027631F7eA37E532",
+      "startBlock": 6815329
+    }
+  }
+}
