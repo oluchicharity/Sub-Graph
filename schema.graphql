@@ -1,6 +1,11 @@
-type ExampleEntity @entity {
-  id: Bytes!
-  count: BigInt!
-  owner: Bytes! # address
-  spender: Bytes! # address
+type User @entity {
+    id: ID!
+    Balance: [Balance!]! @derivedFrom(field: "user")
+}
+
+type Balance @entity {
+    id: ID!
+    user: User!
+    timestamp: BigInt!
+    transactionHash: Bytes!
 }
